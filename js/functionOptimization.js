@@ -18,3 +18,11 @@ restrictions.setElement(1, 0, 0);
 restrictions.setElement(1, 1, 1);
 
 
+bitsRequired = [ ];
+for (var i = 0; i < variableCount; ++i) {
+	var diff = restrictions.getElement(i, 1) - restrictions.getElement(i, 0);
+	var data = Math.floor(Math.log(diff * 10 ** bitsCount) + 1);
+	bitsRequired.push(data);
+}
+
+
