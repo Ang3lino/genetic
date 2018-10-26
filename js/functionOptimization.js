@@ -1,10 +1,11 @@
 
-
 function generateVectors(bits) {
     vectors = []
     sum = bits.reduce((a, b) => a + b, 0); // obtain the sum of the bits required
-    for (var i = 0; i < sum; ++i)
-        vectors.push(((1 << sum) - 1) * Math.random());
+    for (var i = 0; i < sum; ++i) {
+        randValue = ((1 << sum) - 1) * Math.random();
+        vectors.push(Math.floor(randValue)); // we add an INTEGER random number
+    }
     return vectors;
 }
 
@@ -38,6 +39,5 @@ for (var i = 0; i < variableCount; ++i) {
 vectors = generateVectors(bitsRequired);
 console.log(bitsRequired);
 console.log(vectors);
-console.log(Math.log(2.7182));
-
+console.log(2 ** 7 - 1);
 
