@@ -7,7 +7,12 @@ class Matrix {
         this.matrix = Array(nFiles).fill().map(() => Array(nColumns).fill());
     }
 
+    get rows() { return this.m; }
+
+    get columns() { return this.n; }
+
     getElement(i, j) {
+        //document.write(i.toString() + " " + j.toString() + " <br />");
         if (i < this.m && j < this.n) 
             return this.matrix[i][j];
         throw "invalid position.";
@@ -30,12 +35,15 @@ class Matrix {
     }
 
     writeInDocument() {
+        document.write("<pre>")
         for (var i = 0; i < this.m; ++i) {
             for (var j = 0; j < this.n; ++j) {
-                document.write(this.matrix[i][j]);
+                document.write(this.matrix[i][j] + "    ");
             }
-            document.write("\n");
+            //document.write("<br />");
+            document.writeln("");
         }
+        document.write("<pre/>")
     }
 
 }
