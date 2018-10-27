@@ -53,15 +53,15 @@ function computeVariable(x, i, restrictions, bitsRequired) {
 function generateValidVectors(nIndividuals, bitsRequired, restrictions) {
     let nVariables = bitsRequired.length;
     let vectors = new Matrix(nIndividuals, nVariables);
-    let variable; 
+    let randomVar;
     for (let i = 0; i < vectors.rows; ++i) {
         for (let j = 0; j < vectors.columns; ++j) {
             do {
                 randomVar = ((1 << bitsRequired[j]) - 1) * Math.random(); 
-                restrictedValue = computeVariable(variable, j, restrictions, bitsRequired);
-                console.log(randomVar + " <br />");
+                restrictedValue = computeVariable(randomVar, j, restrictions, bitsRequired);
             } while (!isValidVariable(restrictedValue, j, restrictions)); 
-            vectors.setElement(i, j, randomVar);
+            console.log(restrictedValue);
+            vectors.setElement(i, j, Math.floor(randomVar));
         }
     }
     return vectors;
@@ -70,8 +70,8 @@ function generateValidVectors(nIndividuals, bitsRequired, restrictions) {
 // Problem inicialization
 let variableCount = 2;
 let restrictionCount = variableCount;
-let poblationCount = 9;
-let individualCount = 6;
+let poblationCount = 900000;
+let individualCount = 3000;
 let bitsCount = 1;
 
 let restrictions = createRestrictions(variableCount);
