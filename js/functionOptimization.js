@@ -38,8 +38,14 @@ function isValidVariable (variable, index, restrictions) {
         && variable <= restrictions.getElement(index, 1);
 }
 
+function computeVariable(x, i, restrictions, bitsRequired) {
+    let a = restrictions.getElement(i, 0);
+    let b = restrictions.getElement(i, 1);
+    return a + x * ((b - a) / ((1 << bitsRequired[i]) - 1));
+}
+
 /**
- * 
+ * Complexity O(n ** 3)
  * @param {amount of individuals} nIndividuals 
  * @param {array of the bits needed for every single variable} bitsRequired 
  * @param {A Matrix of restrictions} restrictions 
@@ -47,13 +53,15 @@ function isValidVariable (variable, index, restrictions) {
 function generateValidVectors(nIndividuals, bitsRequired, restrictions) {
     let nVariables = bitsRequired.length;
     let vectors = new Matrix(nIndividuals, nVariables);
+    let variable; 
     for (let i = 0; i < vectors.rows; ++i) {
         for (let j = 0; j < vectors.columns; ++j) {
-            let variable = restrictions.getElement(j, 1) + 1; // it is not valid at first
-            while (!isValidVariable(variable, j, restrictions)) {
-                variable = ((1 << bitsRequired[j]) - 1) * Math.random(); 
-            }
-            vectors.setElement(i, j, variable);
+            do {
+                randomVar = ((1 << bitsRequired[j]) - 1) * Math.random(); 
+                restrictedValue = computeVariable(variable, j, restrictions, bitsRequired);
+                console.log(randomVar + " <br />");
+            } while (!isValidVariable(restrictedValue, j, restrictions)); 
+            vectors.setElement(i, j, randomVar);
         }
     }
     return vectors;
@@ -62,8 +70,8 @@ function generateValidVectors(nIndividuals, bitsRequired, restrictions) {
 // Problem inicialization
 let variableCount = 2;
 let restrictionCount = variableCount;
-let poblationCount = 10;
-let individualCount = 10;
+let poblationCount = 9;
+let individualCount = 6;
 let bitsCount = 1;
 
 let restrictions = createRestrictions(variableCount);
