@@ -9,6 +9,7 @@ function accumulateSums(numberArray) {
     return accumulate;
 }
 
+
 function createRestrictions(amountVariables) {
     var restrictions = new Matrix(variableCount, 2);
 
@@ -67,18 +68,73 @@ function generateValidVectors(nIndividuals, bitsRequired, restrictions) {
     return vectors;
 }
 
-// Problem inicialization
-let variableCount = 2;
-let restrictionCount = variableCount;
-let poblationCount = 900000;
-let individualCount = 3000;
-let bitsCount = 1;
+function evalObjectiveFunction(strFunction, variables) {
+    let char = 'abcdefhijklmnopqrstuvwxyz';
+    for (let i = 0; i < variables.length; ++i) {
+        let x = char.charAt(i);
+        let y = variables[i];
+        strFunction = strFunction.replace(x, y);
+    }
+    //console.log(strFunction);
+    return eval(strFunction);
+}
 
-let restrictions = createRestrictions(variableCount);
-restrictions.writeInDocument();
+/**
+ * Finds the lowest upper bound of a sorted array, it is a kind of binary search.
+ * Complexity: Theta(lg n)
+ * @param {A sorted array} arr 
+ * @param {index for the low limit} l 
+ * @param {index for the high limit} r 
+ * @param {findable data} data 
+ */
+function lowestUpperBound(arr, l, r, data) {
+    if (r > l) {
+        for (let i = l; i < arr.length; ++i) 
+            if (arr[i] >= data) return i;
+        return arr.length - 1;
+    }
+	let mid = Math.floor((r - l) / 2);
+	if (arr[mid] == data) return mid; 
+    if (arr[mid] < data) return lowestUpperBound(arr, mid + 1, r, data);
+    return lowestUpperBound(arr, l, mid - 1, data);
+}
 
-objectiveFunction = (x, y) => x + y;
-bitsRequired = computeBitsRequired(variableCount, restrictions);
+function process(vectors, strFunction, restrictions, bitsRequired) {
+    let variables = new Array(vectors.columns);
+    let evaluated = [];
+    vectors.matrix.forEach(function(vecs) {
+        let i = 0;
+        vecs.forEach(function(v) {
+            variables[i] = computeVariable(v, i, restrictions, bitsRequired);
+            ++i;
+        });
+        evaluated.push(evalObjectiveFunction(strFunction, variables));
+    });
+    let totalSum = evaluated.reduce((x, y) => x + y, 0);
+    let divided = evaluated.map(e => e / totalSum);
+	let accumulated = accumulateSums(divided);
+	let randoms = new Array(vectors.rows).fill(1).map(e => Math.random());
+    let indexesArr = [];
+    for (let rand in randoms) indexesArr.push(lowestUpperBound(accumulated, 0, accumulated.length - 1, rand));
+}
 
-vectors = generateValidVectors(individualCount, bitsRequired, restrictions);
-vectors.writeInDocument();
+function main() {
+    // Problem inicialization
+    let variableCount = 2;
+    let restrictionCount = variableCount;
+    let poblationCount = 5;
+    let individualCount = 10;
+    let bitsCount = 1;
+
+    let restrictions = createRestrictions(variableCount);
+    //restrictions.writeInDocument();
+
+    let objectiveFunction = 'a + b';
+    let bitsRequired = computeBitsRequired(variableCount, restrictions);
+
+    vectors = generateValidVectors(individualCount, bitsRequired, restrictions);
+
+    process(vectors, objectiveFunction, restrictions, bitsRequired);
+}
+
+//main();
