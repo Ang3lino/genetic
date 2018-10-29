@@ -11,7 +11,7 @@ function accumulateSums(numberArray) {
 
 
 function createRestrictions(amountVariables) {
-    var restrictions = new Matrix(variableCount, 2);
+    var restrictions = new Matrix(amountVariables, 2);
 
     // restrictions for the first variable
     restrictions.setElement(0, 0, 0);
@@ -24,7 +24,7 @@ function createRestrictions(amountVariables) {
     return restrictions;
 }
 
-function computeBitsRequired(variableCount, restrictions) {
+function computeBitsRequired(variableCount, restrictions, bitsCount) {
     let bitsRequired = [ ];
     for (let i = 0; i < variableCount; ++i) {
         let diff = restrictions.getElement(i, 1) - restrictions.getElement(i, 0);
@@ -102,20 +102,24 @@ function lowestUpperBound(arr, l, r, data) {
 function process(vectors, strFunction, restrictions, bitsRequired) {
     let variables = new Array(vectors.columns);
     let evaluated = [];
+
     vectors.matrix.forEach(function(vecs) {
         let i = 0;
-        vecs.forEach(function(v) {
+        vecs.forEach(v => {
             variables[i] = computeVariable(v, i, restrictions, bitsRequired);
             ++i;
         });
         evaluated.push(evalObjectiveFunction(strFunction, variables));
     });
+
     let totalSum = evaluated.reduce((x, y) => x + y, 0);
     let divided = evaluated.map(e => e / totalSum);
 	let accumulated = accumulateSums(divided);
 	let randoms = new Array(vectors.rows).fill(1).map(e => Math.random());
-    let indexesArr = [];
-    for (let rand in randoms) indexesArr.push(lowestUpperBound(accumulated, 0, accumulated.length - 1, rand));
+    let indexes = new Set(); // It's a set given that we don't need repeated indexes
+
+    debugger;
+    randoms.forEach(rand => indexes.add(lowestUpperBound(accumulated, 0, accumulated.length - 1, rand)));
 }
 
 function main() {
@@ -130,11 +134,11 @@ function main() {
     //restrictions.writeInDocument();
 
     let objectiveFunction = 'a + b';
-    let bitsRequired = computeBitsRequired(variableCount, restrictions);
+    let bitsRequired = computeBitsRequired(variableCount, restrictions, bitsCount);
 
     vectors = generateValidVectors(individualCount, bitsRequired, restrictions);
 
     process(vectors, objectiveFunction, restrictions, bitsRequired);
 }
 
-//main();
+main();
