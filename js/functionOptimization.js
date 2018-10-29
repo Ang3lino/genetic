@@ -105,10 +105,7 @@ function process(vectors, strFunction, restrictions, bitsRequired) {
 
     vectors.matrix.forEach(function(vecs) {
         let i = 0;
-        vecs.forEach(v => {
-            variables[i] = computeVariable(v, i, restrictions, bitsRequired);
-            ++i;
-        });
+        vecs.forEach(v => variables[i] = computeVariable(v, i++, restrictions, bitsRequired) );
         evaluated.push(evalObjectiveFunction(strFunction, variables));
     });
 
