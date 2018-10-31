@@ -99,6 +99,25 @@ function lowestUpperBound(arr, l, r, data) {
     return lowestUpperBound(arr, l, mid - 1, data);
 }
 
+// v = x0x1x2...xn
+// 0110 1111 = 0101 1111 xor 0010 0000
+function mutate(vector, bitsRequired) {
+	let selVar = Math.floor(bitsRequired.length * Math.random());
+	let indexVar = 	Math.floor(bitsRequired[selVar] * Math.random());
+	let newVec = vector.slice(); // copy a vector
+	newVec[selVar] = newVec[selVar] ^ (1 << indexVar); 
+	return newVec;
+}
+
+function cross(strongVec, weakVec, bitsRequired) {
+	let selVar = Math.floor(bitsRequired.length * Math.random());
+	let n =	Math.floor(bitsRequired[selVar] * Math.random());
+    let newVec = weakVec.slice(); // copy a vector
+    let mask = (1 << n) - 1;
+    newVec[selVar] = (strongVec[selVar] & mask) | (weakVec[selVar] & ~mask);
+    return newVec;
+}
+
 function process(vectors, strFunction, restrictions, bitsRequired) {
     let variables = new Array(vectors.columns);
     let evaluated = [];
@@ -106,7 +125,7 @@ function process(vectors, strFunction, restrictions, bitsRequired) {
     vectors.matrix.forEach(function(vecs) {
         let i = 0;
         vecs.forEach(v => variables[i] = computeVariable(v, i++, restrictions, bitsRequired) );
-        evaluated.push(evalObjectiveFunction(strFunction, variables));
+		evaluated.push(evalObjectiveFunction(strFunction, variables));
     });
 
     let totalSum = evaluated.reduce((x, y) => x + y, 0);
@@ -117,6 +136,9 @@ function process(vectors, strFunction, restrictions, bitsRequired) {
 
     debugger;
     randoms.forEach(rand => indexes.add(lowestUpperBound(accumulated, 0, accumulated.length - 1, rand)));
+
+	console.log("");
+
 }
 
 function main() {
@@ -138,4 +160,13 @@ function main() {
     process(vectors, objectiveFunction, restrictions, bitsRequired);
 }
 
-main();
+//main();
+
+// v = x0x1x2...xn
+// 0110 1111 = 0101 1111 xor 0010 0000
+vec = [6, 15];
+bitsRequired = [4, 4];
+
+debugger;
+mutVec = mutate(vec, bitsRequired);
+
