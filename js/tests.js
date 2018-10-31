@@ -14,3 +14,12 @@ function mutateTest() {
     debugger;
     mutVec = mutate(vec, bitsRequired);
 }
+
+function crossTest() {
+    vec1 = [14, 6];
+    vec2 = [1, 5];
+    bitsRequired = [4, 4];
+    debugger;
+    cross(vec1, vec2, bitsRequired);
+    
+}

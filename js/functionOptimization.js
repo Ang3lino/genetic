@@ -61,7 +61,7 @@ function generateValidVectors(nIndividuals, bitsRequired, restrictions) {
                 randomVar = ((1 << bitsRequired[j]) - 1) * Math.random(); 
                 restrictedValue = computeVariable(randomVar, j, restrictions, bitsRequired);
             } while (!isValidVariable(restrictedValue, j, restrictions)); 
-            console.log(restrictedValue);
+            //console.log(restrictedValue);
             vectors.setElement(i, j, Math.floor(randomVar));
         }
     }
@@ -150,11 +150,10 @@ function process(vectors, strFunction, restrictions, bitsRequired) {
 	let randoms = new Array(vectors.rows).fill(1).map(e => Math.random());
     let indexes = new Set(); // It's a set given that we don't need repeated indexes
 
-    debugger;
     randoms.forEach(rand => indexes.add(lowestUpperBound(accumulated, 0, accumulated.length - 1, rand)));
-
-	console.log("");
-
+    //debugger;
+    console.log(indexes.size);
+    console.log(vectors.rows);
 }
 
 function main() {
@@ -162,7 +161,7 @@ function main() {
     let variableCount = 2;
     let restrictionCount = variableCount;
     let poblationCount = 5;
-    let individualCount = 10;
+    let individualCount = 10000;
     let bitsCount = 1;
 
     let restrictions = createRestrictions(variableCount);
@@ -176,10 +175,4 @@ function main() {
     process(vectors, objectiveFunction, restrictions, bitsRequired);
 }
 
-//main();
-
-vec1 = [14, 6];
-vec2 = [1, 5];
-bitsRequired = [4, 4];
-debugger;
-cross(vec1, vec2, bitsRequired);
+main();
