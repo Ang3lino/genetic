@@ -99,22 +99,38 @@ function lowestUpperBound(arr, l, r, data) {
     return lowestUpperBound(arr, l, mid - 1, data);
 }
 
-// v = x0x1x2...xn
-// 0110 1111 = 0101 1111 xor 0010 0000
+/**
+ * 0110 1111 = 0101 1111 xor 0010 0000
+ * @param {a vector made of variables x0, x1, ..., x_{n-1}} vector 
+ * @param {Array which containts the amount of bits used for each variable} bitsRequired 
+ */
 function mutate(vector, bitsRequired) {
+    // decide randomly the bit to mutate
 	let selVar = Math.floor(bitsRequired.length * Math.random());
-	let indexVar = 	Math.floor(bitsRequired[selVar] * Math.random());
+    let indexVar = 	Math.floor(bitsRequired[selVar] * Math.random());
+
 	let newVec = vector.slice(); // copy a vector
-	newVec[selVar] = newVec[selVar] ^ (1 << indexVar); 
+	newVec[selVar] = newVec[selVar] ^ (1 << indexVar); // negate the bit using a xor 
 	return newVec;
 }
 
+/**
+ * Example
+ * cross the first 3 bits
+ * 1110 1010 strong vector
+ * 0001 0101 weak vector
+ * 1110      mask
+ * 1111 0101 result
+ * @param {Array} strongVec 
+ * @param {Array} weakVec 
+ * @param {Array} bitsRequired 
+ */
 function cross(strongVec, weakVec, bitsRequired) {
 	let selVar = Math.floor(bitsRequired.length * Math.random());
 	let n =	Math.floor(bitsRequired[selVar] * Math.random());
     let newVec = weakVec.slice(); // copy a vector
     let mask = (1 << n) - 1;
-    newVec[selVar] = (strongVec[selVar] & mask) | (weakVec[selVar] & ~mask);
+    newVec[selVar] = (strongVec[selVar] & (~mask)) | (weakVec[selVar] & (mask));
     return newVec;
 }
 
@@ -162,11 +178,8 @@ function main() {
 
 //main();
 
-// v = x0x1x2...xn
-// 0110 1111 = 0101 1111 xor 0010 0000
-vec = [6, 15];
+vec1 = [14, 6];
+vec2 = [1, 5];
 bitsRequired = [4, 4];
-
 debugger;
-mutVec = mutate(vec, bitsRequired);
-
+cross(vec1, vec2, bitsRequired);

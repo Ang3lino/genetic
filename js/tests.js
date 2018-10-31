@@ -1,5 +1,5 @@
 
-function lowBound() {
+function lowBoundTest() {
     let randoms = [0, 3, 5, 7, 9, 11, 13];
     let values  = [2, 4, 7, 8, 12, 13, 15];
     test = [];
@@ -8,3 +8,9 @@ function lowBound() {
     document.write(test);
 }
 
+function mutateTest() {
+    vec = [6, 15];
+    bitsRequired = [4, 4];
+    debugger;
+    mutVec = mutate(vec, bitsRequired);
+}
