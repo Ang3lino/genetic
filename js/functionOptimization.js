@@ -60,17 +60,17 @@ function generateValidVectors(nIndividuals, bitsRequired, restrictions) {
                 randomVar = ((1 << bitsRequired[j]) - 1) * Math.random(); 
                 restrictedValue = computeVariable(randomVar, j, restrictions, bitsRequired);
             } while (!isValidVariable(restrictedValue, j, restrictions)); 
-            //console.log(restrictedValue);
             vectors.setElement(i, j, Math.floor(randomVar));
         }
     }
     return vectors;
 }
 
+// TODO
 function evalObjectiveFunction(strFunction, variables) {
-    let char = 'abcdefhijklmnopqrstuvwxyz';
+    let strVars = 'abcdefhijklmnopqrstuvwxyz';
     for (let i = 0; i < variables.length; ++i) {
-        let x = char.charAt(i);
+        let x = strVars.charAt(i);
         let y = variables[i];
         strFunction = strFunction.replace(x, y);
     }
@@ -86,25 +86,28 @@ function evalObjectiveFunction(strFunction, variables) {
  * @param {index for the high limit} r 
  * @param {findable data} data 
  */
-function lowestUpperBound(arr, l, r, data) {
-    if (r > l) {
-        for (let i = l; i < arr.length; ++i) 
-            if (arr[i] >= data) return i;
-        return arr.length - 1;
+function lowestUpperBound(arr, data) {
+    let helper = (arr, l, r, data) => {
+        if (r > l) {
+            for (let i = l; i < arr.length; ++i) 
+                if (arr[i] >= data) return i;
+            return arr.length - 1;
+        }
+        let mid = Math.floor((r - l) / 2);
+        if (arr[mid] == data) return mid; 
+        if (arr[mid] < data) return helper(arr, mid + 1, r, data);
+        return helper(arr, l, mid - 1, data);
     }
-	let mid = Math.floor((r - l) / 2);
-	if (arr[mid] == data) return mid; 
-    if (arr[mid] < data) return lowestUpperBound(arr, mid + 1, r, data);
-    return lowestUpperBound(arr, l, mid - 1, data);
+    return helper(arr, 0, arr.length - 1, data);
 }
 
 function binarySearch(arr, findable) { 
-    helper = (arr, l, r, findable) => {
+    let helper = (arr, l, r, findable) => {
         if (l > r) return false;
         let mid = Math.floor((r - l) / 2) + l;
         if (arr[mid] == findable) return true;
-        if (findable < arr[mid]) return binarySearchHelper(arr, l, mid - 1, findable);
-        return binarySearchHelper(arr, mid + 1, r, findable);
+        if (findable < arr[mid]) return helper(arr, l, mid - 1, findable);
+        return helper(arr, mid + 1, r, findable);
     }
 
     return helper(arr, 0, arr.length - 1, findable);
@@ -145,19 +148,24 @@ function cross(strongVec, weakVec, bitsRequired) {
     return newVec;
 }
 
-function obtainIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRequired,
-        maxValue) {
+function popWeakVectors(vectors, bitsRequired, indexes) {
+    let eps = 1e-16;
+    //debugger;
+    for (let i = 0; i < vectors.rows - indexes.length; ++i) {
+        if (!binarySearch(indexes, i)) { // the index corresponds to a weak vector
+            vectors.matrix[i] = mutate(vectors.matrix[i], bitsRequired);
+        }
+    }
+}
+
+function arrayIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRequired) {
     let variables = new Array(vectors.columns); // create an array of v.columns
     let evaluated = [];
-    maxValue = -Infinity;
 
     vectors.matrix.forEach(function(vecs) {
         let i = 0;
-        let value;
         vecs.forEach( v => variables[i] = computeVariable(v, i++, restrictions, bitsRequired) );
-        value = evalObjectiveFunction(strFunction, variables);
-		evaluated.push(value);
-        if (value >= maxValue) maxValue = value;
+		evaluated.push(evalObjectiveFunction(strFunction, variables));
     });
 
     let totalSum = evaluated.reduce((x, y) => x + y, 0);
@@ -166,27 +174,37 @@ function obtainIndexesStrongestVectors(vectors, strFunction, restrictions, bitsR
 	let randoms = new Array(vectors.rows).fill(1).map(e => Math.random());
     let indexes = new Set(); // It's a set given that we don't need repeated indexes
 
-    randoms.forEach(rand => indexes.add(lowestUpperBound(accumulated, 0, accumulated.length - 1, rand)));
-    return Array.from(indexes).sort();
+    randoms.forEach(rand => indexes.add(lowestUpperBound(accumulated, rand)));
+    let maxValue = Math.max.apply(null, evaluated);
+    //debugger;
+    return [maxValue, Array.from(indexes).sort()];
 }
 
 function main() {
+
     // Problem inicialization
-    let variableCount = 2;
-    let restrictionCount = variableCount;
-    let poblationCount = 5;
-    let individualCount = 10;
-    let bitsCount = 1;
-
+    let variableCount = 2, restrictionCount = variableCount;
+    let poblationCount = 5, individualCount = 500, bitsCount = 1;
     let restrictions = createRestrictions(variableCount);
-    //restrictions.writeInDocument();
-
-    let objectiveFunction = 'a + b';
+    let objectiveFunction = '(a) + (b)';  
     let bitsRequired = computeBitsRequired(variableCount, restrictions, bitsCount);
+    let vectors = generateValidVectors(individualCount, bitsRequired, restrictions);
+    let maxValues = new Set(); // stores the value of the highest value evaluated per poblation
+    let indexes = [];
 
-    vectors = generateValidVectors(individualCount, bitsRequired, restrictions);
+    for (let i = 0; i < poblationCount; ++i) {
+        let pair = arrayIndexesStrongestVectors(vectors, objectiveFunction, restrictions, bitsRequired);
+        maxValues.add(pair[0]);
+        indexes = pair[1];
+        popWeakVectors(vectors, bitsRequired, indexes); 
+    }
 
-    obtainIndexesStrongestVectors(vectors, objectiveFunction, restrictions, bitsRequired);
+    //debugger;
+    console.log(maxValues);
 }
 
 main();
+//let arr = new Array(10).fill(1).map(e => Math.floor(10 * Math.random())).sort();
+//arr.forEach(e => document.write(binarySearch(arr, e) + "<br/>"));
+
+// Angel
