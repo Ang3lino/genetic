@@ -9,7 +9,6 @@ function accumulateSums(numberArray) {
     return accumulate;
 }
 
-
 function createRestrictions(amountVariables) {
     var restrictions = new Matrix(amountVariables, 2);
 
@@ -99,6 +98,18 @@ function lowestUpperBound(arr, l, r, data) {
     return lowestUpperBound(arr, l, mid - 1, data);
 }
 
+function binarySearch(arr, findable) { 
+    helper = (arr, l, r, findable) => {
+        if (l > r) return false;
+        let mid = Math.floor((r - l) / 2) + l;
+        if (arr[mid] == findable) return true;
+        if (findable < arr[mid]) return binarySearchHelper(arr, l, mid - 1, findable);
+        return binarySearchHelper(arr, mid + 1, r, findable);
+    }
+
+    return helper(arr, 0, arr.length - 1, findable);
+}
+
 /**
  * 0110 1111 = 0101 1111 xor 0010 0000
  * @param {a vector made of variables x0, x1, ..., x_{n-1}} vector 
@@ -134,26 +145,29 @@ function cross(strongVec, weakVec, bitsRequired) {
     return newVec;
 }
 
-function process(vectors, strFunction, restrictions, bitsRequired) {
-    let variables = new Array(vectors.columns);
+function obtainIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRequired,
+        maxValue) {
+    let variables = new Array(vectors.columns); // create an array of v.columns
     let evaluated = [];
+    maxValue = -Infinity;
 
     vectors.matrix.forEach(function(vecs) {
         let i = 0;
-        vecs.forEach(v => variables[i] = computeVariable(v, i++, restrictions, bitsRequired) );
-		evaluated.push(evalObjectiveFunction(strFunction, variables));
+        let value;
+        vecs.forEach( v => variables[i] = computeVariable(v, i++, restrictions, bitsRequired) );
+        value = evalObjectiveFunction(strFunction, variables);
+		evaluated.push(value);
+        if (value >= maxValue) maxValue = value;
     });
 
     let totalSum = evaluated.reduce((x, y) => x + y, 0);
     let divided = evaluated.map(e => e / totalSum);
-	let accumulated = accumulateSums(divided);
+	let accumulated = accumulateSums(divided); 
 	let randoms = new Array(vectors.rows).fill(1).map(e => Math.random());
     let indexes = new Set(); // It's a set given that we don't need repeated indexes
 
     randoms.forEach(rand => indexes.add(lowestUpperBound(accumulated, 0, accumulated.length - 1, rand)));
-    //debugger;
-    console.log(indexes.size);
-    console.log(vectors.rows);
+    return Array.from(indexes).sort();
 }
 
 function main() {
@@ -161,7 +175,7 @@ function main() {
     let variableCount = 2;
     let restrictionCount = variableCount;
     let poblationCount = 5;
-    let individualCount = 10000;
+    let individualCount = 10;
     let bitsCount = 1;
 
     let restrictions = createRestrictions(variableCount);
@@ -172,7 +186,7 @@ function main() {
 
     vectors = generateValidVectors(individualCount, bitsRequired, restrictions);
 
-    process(vectors, objectiveFunction, restrictions, bitsRequired);
+    obtainIndexesStrongestVectors(vectors, objectiveFunction, restrictions, bitsRequired);
 }
 
 main();
