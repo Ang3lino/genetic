@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Genetic algorithm to maximize a function </title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <title> Proyecto de metodos: Algoritmos geneticos </title>
     
     <link href ="materialize.min.css" rel="stylesheet">
     <link href ="materialize.css" rel="stylesheet">
@@ -14,23 +14,39 @@
 
 </head>
 
-<body>
+<body background="fondomet.jpg" >
 
-    <!--
+    
+<div class="container">
+	<h1 style="color:#82449d" align="center"> Proyecto para la U.A. MCTD </h1>
+	<p align="center"> Escriba la siguiente información, se maximizará la función objetivo mediante algoritmos genéticos. </p>
+    <form id="Formulario" action="/Restricciones.html" method="get">
+	<div class="row">
+		<div class="col s12 m6 input-field">
+        <label style="color:black"> Función objetivo </label>
+        <input type="text" id="FuncObjetivo" name="Funcion objetivo">
+		</div>
+		<div class="col s12 m6 input-field">
+        <label style="color:black"> Número de restricciones </label>
+        <input type="number" id="nRest" name="Numero de restricciones" min="1" max="7">
+		</div>
+		<div class="col s12 m6 input-field">
+        <label style="color:black"> Cantidad de individuos </label>
+        <input type="number" id="nVects" name="Numero de individuos" min="1">
+		</div>
+		<div class="col s12 m6 input-field">
+        <label style="color:black"> Cantidad de poblaciones </label>
+        <input type="number" id="nIter" name="Poblaciones" min="1" max="100">
+		</div>
+	</div>
+	<div class="row">
+        <input type="submit" value="Calcular" id="SubCalcular" style= "width: 100%">
+	</div>
+	</form>
+</div>
+    
 
-    <form action="/action_page.php" method="get">
-        <label> Funcion objetivo: </label>
-        <input type="text" id="FuncObjetivo" value="FuncObjetivo">
-        <label> Numero de restricciones: </label>
-        <input type="text" id="nRest" value="nRest">
-        <label> Cantidad de individuos: </label>
-        <input type="text" id="nVects" value="nVects">
-        <label> Cantidad de poblaciones: </label>
-        <input type="text" id="nIter" value="nIter">
-        <input type="submit" value="Submit">
-    </form>
-
-    -->
+    
 
     <script src="js/functionOptimization.js"> </script>
     
