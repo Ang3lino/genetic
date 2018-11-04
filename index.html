@@ -17,9 +17,11 @@
 	<script src="js/Matrix.js" type="text/javascript"> </script>
 	<script src="js/events.js" type="text/javascript"> </script>
 
-	<script type="text/javascript">
-		window.onload = execEvents;
-	</script>
+	<!--
+		script type="text/javascript">
+			window.onload = execEvents;
+		</script>
+	-->
 
 </head>
 
@@ -36,7 +38,7 @@
 		<div class="row">
 			<div class="col s12 input-field" >
 				<label style="color:black"> Función objetivo </label>
-				<input type="text" name="Funcion objetivo" id="objective-func-txt" >
+				<input type="text" name="Funcion objetivo" id="objective-func-txt" onchange="eventStrFun()">
 			</div>
 			<div class="col s4 input-field">
 				<label style="color:black"> Cantidad de individuos </label>
@@ -52,11 +54,11 @@
 			</div>
 		</div>
 
-		<div class="container ">
+		<div class="container hide" id="restrictions-table">
 			<div class="center-align">
 				Restricciones
 			</div>
-			<table>
+			<table >
 				<thead>
 					<tr>
 						<th>Limite inferior</th>
@@ -65,7 +67,7 @@
 					</tr>
 				</thead>
 			
-				<tbody>
+				<tbody >
 					<tr>
 						<td>0</td>
 						<td>a</td>

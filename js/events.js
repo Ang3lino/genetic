@@ -19,11 +19,34 @@ function inferNumberVariables(strFun, alphabet) {
  * main function which should execute everthing from this document.
  */
 function execEvents() {
-    var funcTxt = document.getElementById("objective-func-txt");
+    let funcTxt = document.getElementById("objective-func-txt");
+    let restrictionsTable = document.getElementById("restrictions-table");
+    let alphabet = "abcdefghijklmnopqrstuvwxyz";
 
-    funcTxt.addEventListener("input", function() {
-        console.log(funcTxt.value);
-        console.log(inferNumberVariables(funcTxt.value, buildAlphabet()));
+    funcTxt.addEventListener("onchange", function(e) {
+        let nvar = inferNumberVariables(funcTxt.value, alphabet);
+
+        className = restrictionsTable.className;
+        if (className.includes("hide")) className = className.replace("hide", "");
+        else className += "hide";
+        restrictionsTable.className = className;
+        console.log(className);
     });
+
+
+}
+
+function eventStrFun() {
+    let funcTxt = document.getElementById("objective-func-txt");
+    let restrictionsTable = document.getElementById("restrictions-table");
+    let alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+    let nvar = inferNumberVariables(funcTxt.value, alphabet);
+
+    className = restrictionsTable.className;
+    if (className.includes("hide")) className = className.replace("hide", "");
+    else className += "hide";
+    restrictionsTable.className = className;
+    console.log(className);
 
 }
