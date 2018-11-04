@@ -23,52 +23,69 @@
 
 </head>
 
+<!--
 <body background="fondomet.jpg" >
+-->
 
+<body  >
     
-<div class="container">
-	<h1 style="color:#82449d" align="center"> Proyecto para la U.A. MCTD </h1>
-	<p align="center"> Escriba la siguiente información, se maximizará la función objetivo mediante algoritmos genéticos. </p>
-   
-	<form id="formulario" method="get" action="#">
+	<div class="container">
+		<h1 style="color:#82449d" align="center"> Proyecto para la U.A. MCTD </h1>
+		<p align="center"> Escriba la siguiente información, se maximizará la función objetivo mediante algoritmos genéticos. </p>
 
-		<div class="row"   >
-			<div class="col s8 m4 input-field" >
+		<div class="row">
+			<div class="col s12 input-field" >
 				<label style="color:black"> Función objetivo </label>
 				<input type="text" name="Funcion objetivo" id="objective-func-txt" >
 			</div>
-			<div class="col s8 m4 input-field">
-				<label style="color:black"> Número de variables </label>
-				<input type="number" id="nVar" name="Numero de variables" min="1" max="100">
-			</div>
-			<div class="col s8 m4 input-field">
-				<label style="color:black"> Número de restricciones </label>
-				<input type="number" id="nRest" name="Numero de restricciones" min="1" max="7">
-			</div>
-			<div class="col s8 m4 input-field">
+			<div class="col s4 input-field">
 				<label style="color:black"> Cantidad de individuos </label>
 				<input type="number" id="nVects" name="Numero de individuos" min="1">
 			</div>
-			<div class="col s8 m4 input-field">
+			<div class="col s4 input-field">
 				<label style="color:black"> Cantidad de poblaciones </label>
 				<input type="number" id="nIter" name="Poblaciones" min="1" max="100">
 			</div>
-			<div class="col s8 m4 input-field">
+			<div class="col s4 input-field">
 				<label style="color:black"> Bits de precision </label>
 				<input type="number" id="nbits" name="nbits" min="0" max="10">
 			</div>
+		</div>
+
+		<div class="container ">
+			<div class="center-align">
+				Restricciones
+			</div>
+			<table>
+				<thead>
+					<tr>
+						<th>Limite inferior</th>
+						<th>Variable</th>
+						<th>Limite superior</th>
+					</tr>
+				</thead>
+			
+				<tbody>
+					<tr>
+						<td>0</td>
+						<td>a</td>
+						<td>1 / 2</td>
+					</tr>
+					<tr>
+						<td>0</td>
+						<td>b</td>
+						<td>1</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 
 		<div class="row">
 			<input type="submit" value="Calcular" id="SubCalcular" style="width: 100%">
 		</div>
 
-	</form>
-
-</div>
-	
-
-
-
+	</div>
+		
 </body>
+
 </html>
