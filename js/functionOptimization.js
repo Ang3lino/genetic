@@ -183,7 +183,7 @@ function main() {
 
     // Problem inicialization
     let variableCount = 2, restrictionCount = variableCount;
-    let poblationCount = 5, individualCount = 1000000, bitsCount = 1;
+    let poblationCount = 5, individualCount = 50, bitsCount = 1;
     let restrictions = createRestrictions(variableCount);
     let objectiveFunction = '(a) + (b)';  
     let bitsRequired = computeBitsRequired(variableCount, restrictions, bitsCount);
