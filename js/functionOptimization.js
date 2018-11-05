@@ -1,4 +1,3 @@
-//
 function accumulateSums(numberArray) {
     let accumulate = [];
     let sum = 0;
@@ -146,10 +145,13 @@ function cross(strongVec, weakVec, bitsRequired) {
 }
 
 function popWeakVectors(vectors, bitsRequired, indexes) {
-    let eps = 1e-8;
-    for (let i = 0; i < vectors.rows - indexes.length; ++i) {
+    const nweaks = vectors.rows - indexes.length;
+    for (let i = 0; i < nweaks; ++i) {
+        const coin = Math.random();
         if (!binarySearch(indexes, i)) { // the index corresponds to a weak vector
-            vectors.matrix[i] = mutate(vectors.matrix[i], bitsRequired);
+            if (coin < 0.5) vectors.matrix[i] = mutate(vectors.matrix[i], bitsRequired);
+            else 
+                vectors.matrix[i] = cross(vectors.matrix[indexes[i]], vectors.matrix[i], bitsRequired);
         }
     }
 }
@@ -227,6 +229,7 @@ function optimize(variableCount, poblationCount, individualCount, bitsCount,  ob
 function getResultAsString(maxTuples, strFunction) {
     let result = "";
     let i = 1;
+    let maxOn = document.getElementById("switch-max");
     maxTuples.forEach( tuple => {
         result += "Poblacion numero " + i.toString();
         result += ": ( ";
@@ -234,7 +237,8 @@ function getResultAsString(maxTuples, strFunction) {
             result += value + ", ";
         });
         result += " ) => ";
-        result += evalObjectiveFunction(strFunction, tuple) + " \n ";
+        if (maxOn.checked) result += evalObjectiveFunction(strFunction, tuple) + " \n ";
+        else result += -evalObjectiveFunction(strFunction, tuple) + " \n ";
         ++i;
     })
     return result; 
