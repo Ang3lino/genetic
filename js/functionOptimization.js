@@ -12,7 +12,10 @@ function accumulateSums(numberArray) {
 function computeBitsRequired(variableCount, restrictions, bitsCount) {
     let bitsRequired = [ ];
     for (let i = 0; i < variableCount; ++i) {
-        let diff = restrictions.getElement(i, 1) - restrictions.getElement(i, 0);
+        const b = restrictions.getElement(i, 1);
+        const a = restrictions.getElement(i, 0);
+        let diff = b - a;
+        if (isClose(a, b)) ++diff; // patch ?
         let data = Math.floor(Math.log2(diff * 10 ** bitsCount) + 1);
         bitsRequired.push(data);
     }
@@ -21,14 +24,19 @@ function computeBitsRequired(variableCount, restrictions, bitsCount) {
 
 const eps = 1;
 function isValidVariable (variable, index, restrictions) {
-    return restrictions.getElement(index, 0) - eps <= variable 
-        && variable <= restrictions.getElement(index, 1) + eps;
+    const x = restrictions.getElement(index, 0) - eps <= variable;
+    const y = variable <= restrictions.getElement(index, 1) + eps; 
+    return x && y;
 }
 
 function computeVariable(x, i, restrictions, bitsRequired) {
     let a = restrictions.getElement(i, 0);
     let b = restrictions.getElement(i, 1);
     return a + x * ((b - a) / ((1 << bitsRequired[i]) - 1));
+}
+
+function isClose(a, b) {
+    return Math.abs(a - b) <= eps;
 }
 
 /**
@@ -44,7 +52,7 @@ function generateValidVectors(nIndividuals, bitsRequired, restrictions) {
     for (let i = 0; i < vectors.rows; ++i) {
         for (let j = 0; j < vectors.columns; ++j) {
             do {
-		debugger;
+		        //debugger;
                 randomVar = ((1 << bitsRequired[j]) - 1) * Math.random(); 
                 restrictedValue = computeVariable(randomVar, j, restrictions, bitsRequired);
                 console.log("lol");
