@@ -13,8 +13,11 @@ function computeBitsRequired(variableCount, restrictions, bitsCount) {
     let bitsRequired = [ ];
     for (let i = 0; i < variableCount; ++i) {
         let diff = restrictions.getElement(i, 1) - restrictions.getElement(i, 0);
+	    if(diff>0) {
         let data = Math.floor(Math.log2(diff * 10 ** bitsCount) + 1);
         bitsRequired.push(data);
+	    }
+	    
     }
     return bitsRequired;
 }
