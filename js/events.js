@@ -82,6 +82,7 @@ function execEvents() {
     let alphabet = "abcdefghijklmnopqrstuvwxyz";
     let computeBtn = document.getElementById("btn-compute");
     let funcTxt = document.getElementById("objective-func-txt");
+    let txtAreaResult = document.getElementById("txtarea-result");
     let nvar;
 
     const individualCountTxt = document.getElementById("nindividual-txt");
@@ -104,9 +105,9 @@ function execEvents() {
     });
 
     computeBtn.addEventListener("click", function(e) {
-        debugger;
         let restrictions = createRestrictions(nvar);
-
+    
+        txtAreaResult.value = "un mamut chiquitito queria volar";
         //optimize(nvar, parseInt(poblationCountTxt.value), parseInt(individualCountTxt.value),
         //    parseInt(bitsCountTxt.value), funcTxt, restrictions);
     });
