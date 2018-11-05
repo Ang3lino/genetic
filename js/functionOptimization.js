@@ -146,11 +146,18 @@ function popWeakVectors(vectors, bitsRequired, indexes) {
 function arrayIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRequired) {
     let variables = new Array(vectors.columns); // create an array of v.columns
     let evaluated = [];
+    let maxTupleApplied = new Array(vector.columns);
+    let max = -Infinity;
 
     vectors.matrix.forEach(function(vecs) {
         let i = 0;
         vecs.forEach( v => variables[i] = computeVariable(v, i++, restrictions, bitsRequired) );
-		evaluated.push(evalObjectiveFunction(strFunction, variables));
+        let y = evalObjectiveFunction(strFunction, variables);
+        evaluated.push(y);
+        if (y > max) {
+            max = y;
+            maxTupleApplied = variables; 
+        }
     });
 
     let totalSum = evaluated.reduce((x, y) => x + y, 0), divided = evaluated.map(e => e / totalSum);
@@ -158,9 +165,8 @@ function arrayIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRe
     let indexes = new Set(); // It's a set given that we don't need repeated indexes
 
     randoms.forEach(rand => indexes.add(lowestUpperBound(accumulated, rand)));
-    let maxValue = Math.max.apply(null, evaluated);
     //debugger;
-    return [maxValue, Array.from(indexes).sort()];
+    return [maxTupleApplied, Array.from(indexes).sort()];
 }
 
 
@@ -171,20 +177,23 @@ function optimize(variableCount, poblationCount, individualCount, bitsCount,  ob
     
     let bitsRequired = computeBitsRequired(variableCount, restrictions, bitsCount);
     let vectors = generateValidVectors(individualCount, bitsRequired, restrictions);
-    let maxValues = new Set(); // stores the value of the highest value evaluated per poblation
+    let maxTuples = new Set(); // stores the value of the highest value evaluated per poblation
     let indexes = [];
 
     for (let i = 0; i < poblationCount; ++i) {
         let pair = arrayIndexesStrongestVectors(vectors, objectiveFunction, restrictions, bitsRequired);
-        maxValues.add(pair[0]);
+        maxTuples.add(pair[0]);
         indexes = pair[1];
         popWeakVectors(vectors, bitsRequired, indexes); 
     }
 
-    //debugger;
-    console.log(maxValues);
+    
+    let txtAreaResult = document.getElementById("txtarea-result");
+    txtAreaResult.value = maxTuples;
 }
 
 //main();
 //let arr = new Array(10).fill(1).map(e => Math.floor(10 * Math.random())).sort();
 //arr.forEach(e => document.write(binarySearch(arr, e) + "<br/>"));
+
+// Angel

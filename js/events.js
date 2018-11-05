@@ -87,7 +87,6 @@ function execEvents() {
     let updateBtn = document.getElementById("btn-update-restrictions");
     let computeBtn = document.getElementById("btn-compute");
     let funcTxt = document.getElementById("objective-func-txt");
-    let txtAreaResult = document.getElementById("txtarea-result");
 
     const alphabet = "abcdefghijklmnopqrstuvwxyz";
     let nvar;
@@ -112,8 +111,7 @@ function execEvents() {
 
     computeBtn.addEventListener("click", function(e) {
         let restrictions = createRestrictions(nvar);
-    
-        txtAreaResult.value = "un mamut chiquitito queria volar";
+
         let mStrFun = funcTxt.value;
 
         // prepare string for minimizing
