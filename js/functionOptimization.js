@@ -153,10 +153,8 @@ function arrayIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRe
 		evaluated.push(evalObjectiveFunction(strFunction, variables));
     });
 
-    let totalSum = evaluated.reduce((x, y) => x + y, 0);
-    let divided = evaluated.map(e => e / totalSum);
-	let accumulated = accumulateSums(divided); 
-	let randoms = new Array(vectors.rows).fill(1).map(e => Math.random());
+    let totalSum = evaluated.reduce((x, y) => x + y, 0), divided = evaluated.map(e => e / totalSum);
+	let accumulated = accumulateSums(divided), randoms = new Array(vectors.rows).fill(1).map(e => Math.random());
     let indexes = new Set(); // It's a set given that we don't need repeated indexes
 
     randoms.forEach(rand => indexes.add(lowestUpperBound(accumulated, rand)));

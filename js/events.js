@@ -4,7 +4,7 @@
  */
 function buildAlphabet() {
     let alphabet = "";
-    let a = 'a'.charCodeAt(0), b = 'z'.charCodeAt(0);
+    const a = 'a'.charCodeAt(0), b = 'z'.charCodeAt(0);
     for (let i = a; i <= b; ++i) {
         alphabet += String.fromCharCode(i);
     }
@@ -105,7 +105,6 @@ function execEvents() {
 
         createHTMLRestrictions(alphabet, nvar, restrictionsTable);
         
-
         if (maxOn.checked) console.log("It is on."); 
         else console.log("It is off.");
 
@@ -124,5 +123,3 @@ function execEvents() {
     });
 
 }
-
-
