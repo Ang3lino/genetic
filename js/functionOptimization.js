@@ -186,6 +186,7 @@ function main() {
     let poblationCount = 5, individualCount = 50, bitsCount = 1;
     let restrictions = createRestrictions(variableCount);
     let objectiveFunction = '(a) + (b)';  
+    
     let bitsRequired = computeBitsRequired(variableCount, restrictions, bitsCount);
     let vectors = generateValidVectors(individualCount, bitsRequired, restrictions);
     let maxValues = new Set(); // stores the value of the highest value evaluated per poblation

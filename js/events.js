@@ -1,4 +1,7 @@
 
+/**
+ * returns a string abc...z
+ */
 function buildAlphabet() {
     let alphabet = "";
     let a = 'a'.charCodeAt(0), b = 'z'.charCodeAt(0);
@@ -8,6 +11,11 @@ function buildAlphabet() {
     return alphabet;
 }
 
+/**
+ * Given the objective function and an alphabet this will infer the amount of variables used. 
+ * @param {strin} strFun 
+ * @param {string} alphabet 
+ */
 function inferNumberVariables(strFun, alphabet) {
     let count = 0;
     let unique = new Set(strFun);
@@ -16,24 +24,22 @@ function inferNumberVariables(strFun, alphabet) {
 }
 
 /**
- * main function which should execute everthing from this document.
+ * It appears or disappears the restrictions.
+ * @param {HTMLObjects, the main container of the restrictions table} restrictionsTable 
  */
-function execEvents() {
-    let funcTxt = document.getElementById("objective-func-txt");
-    let restrictionsTable = document.getElementById("restrictions-table");
-    let alphabet = "abcdefghijklmnopqrstuvwxyz";
-
-    // Do not write the preffix "on" at the first parameter
-    funcTxt.addEventListener("change", function(e) { 
-        let nvar = inferNumberVariables(funcTxt.value, alphabet);
-
-        blinkRestrictions(restrictionsTable);
-        console.log(restrictionsTable);
-        createHTMLRestrictions(alphabet, nvar, restrictionsTable);
-    });
-
+function blinkRestrictions(restrictionsTable) {
+    className = restrictionsTable.className;
+    if (className.includes("hide")) className = className.replace("hide", "");
+    else className += "hide";
+    restrictionsTable.className = className;
 }
 
+/**
+ * This function will create dynamically a table of restrictions to fill.
+ * @param {A string of the alphabet ab...z} vars 
+ * @param {integer of the amount of variables used} varCount 
+ * @param {An HTMLObject (container) of the restrictions table} tableHTML 
+ */
 function createHTMLRestrictions(vars, varCount, tableHTML) {
     const template = '<tr> <td> <input type="number" id="low-X"> </td> \
         <td>var</td> \
@@ -45,15 +51,37 @@ function createHTMLRestrictions(vars, varCount, tableHTML) {
         let buff = template.replace("X", i);
         newStr += buff.replace("X", i).replace("var", vars[i]);
     }
-    console.log(mainBody);
     mainBody.innerHTML = newStr;
-    console.log(mainBody);
 }
 
-function blinkRestrictions(restrictionsTable) {
-    className = restrictionsTable.className;
-    if (className.includes("hide")) className = className.replace("hide", "");
-    else className += "hide";
-    restrictionsTable.className = className;
-    console.log(className);
+/**
+ * Main function which executes everthing from this document.
+ * 
+ * Basically, here we must obtain the objective function, infer the number of variables
+ * used and with this number create dinamically the restrictions for each one and then 
+ * we pass all the parameters to the functionOptimization.js source.
+ */
+function execEvents() {
+    let funcTxt = document.getElementById("objective-func-txt");
+    let restrictionsTable = document.getElementById("restrictions-table");
+    let updateBtn = document.getElementById("btn-update-restrictions");
+    let alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+    // Do not write the preffix "on" at the first parameter
+    updateBtn.addEventListener("click", function(e) { 
+        let nvar = inferNumberVariables(funcTxt.value, alphabet);
+
+        blinkRestrictions(restrictionsTable);
+        createHTMLRestrictions(alphabet, nvar, restrictionsTable);
+
+        let maxOn = document.getElementById("switch-max");
+        console.log(maxOn);
+        if (maxOn.checked) console.log("It is on."); 
+        else console.log("It is off.");
+
+    });
+
+
 }
+
+
