@@ -143,9 +143,16 @@ function popWeakVectors(vectors, bitsRequired, indexes) {
     }
 }
 
+function printPairs(x, y) {
+    for (let i = 0; i < x.length; ++i) 
+        console.log(x[i], y[i]);
+}
+
 function arrayIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRequired) {
     let variables = new Array(vectors.columns); // create an array of v.columns
-    let evaluated = [];
+    let evaluated = []; // it'll be printed
+
+    let tuples = []; // for printing
     let maxTupleApplied = new Array(vectors.columns);
     let max = -Infinity;
 
@@ -153,16 +160,15 @@ function arrayIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRe
         let i = 0;
         vecs.forEach( v => variables[i] = computeVariable(v, i++, restrictions, bitsRequired) );
         let y = evalObjectiveFunction(strFunction, variables);
+        tuples.push(variables);
         evaluated.push(y);
-        if (y > max) {
-            max = y;
-            maxTupleApplied = variables; 
-        }
+        if (y > max) { max = y; maxTupleApplied = variables; }
     });
 
     let totalSum = evaluated.reduce((x, y) => x + y, 0), divided = evaluated.map(e => e / totalSum);
 	let accumulated = accumulateSums(divided), randoms = new Array(vectors.rows).fill(1).map(e => Math.random());
     let indexes = new Set(); // It's a set given that we don't need repeated indexes
+    printPairs(tuples, evaluated);
 
     randoms.forEach(rand => indexes.add(lowestUpperBound(accumulated, rand)));
     //debugger;
