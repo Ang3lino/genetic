@@ -23,30 +23,37 @@ function execEvents() {
     let restrictionsTable = document.getElementById("restrictions-table");
     let alphabet = "abcdefghijklmnopqrstuvwxyz";
 
-    funcTxt.addEventListener("onchange", function(e) {
+    // Do not write the preffix "on" at the first parameter
+    funcTxt.addEventListener("change", function(e) { 
         let nvar = inferNumberVariables(funcTxt.value, alphabet);
 
-        className = restrictionsTable.className;
-        if (className.includes("hide")) className = className.replace("hide", "");
-        else className += "hide";
-        restrictionsTable.className = className;
-        console.log(className);
+        blinkRestrictions(restrictionsTable);
+        console.log(restrictionsTable);
+        createHTMLRestrictions(alphabet, nvar, restrictionsTable);
     });
-
 
 }
 
-function eventStrFun() {
-    let funcTxt = document.getElementById("objective-func-txt");
-    let restrictionsTable = document.getElementById("restrictions-table");
-    let alphabet = "abcdefghijklmnopqrstuvwxyz";
+function createHTMLRestrictions(vars, varCount, tableHTML) {
+    let template = '<tr> <td> <input type="number" id="low-X"> </td> \
+        <td>var</td> \
+        <td> <input type="number" id="high-X"> </td> </tr>';
+    let mainBody = tableHTML.getElementsByTagName("table")[0]
+                            .getElementsByTagName("tbody")[0];
+    let newStr = "";
+    for (let i = 0; i < varCount; ++i) {
+        let buff = template.replace("X", i);
+        newStr += buff.replace("X", i).replace("var", vars[i]);
+    }
+    console.log(mainBody);
+    mainBody.innerHTML = newStr;
+    console.log(mainBody);
+}
 
-    let nvar = inferNumberVariables(funcTxt.value, alphabet);
-
+function blinkRestrictions(restrictionsTable) {
     className = restrictionsTable.className;
     if (className.includes("hide")) className = className.replace("hide", "");
     else className += "hide";
     restrictionsTable.className = className;
     console.log(className);
-
 }

@@ -149,7 +149,7 @@ function cross(strongVec, weakVec, bitsRequired) {
 }
 
 function popWeakVectors(vectors, bitsRequired, indexes) {
-    let eps = 1e-16;
+    let eps = 1e-8;
     for (let i = 0; i < vectors.rows - indexes.length; ++i) {
         if (!binarySearch(indexes, i)) { // the index corresponds to a weak vector
             vectors.matrix[i] = mutate(vectors.matrix[i], bitsRequired);
