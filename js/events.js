@@ -116,6 +116,7 @@ function execEvents() {
 
         // prepare string for minimizing
         if ( !maxOn.checked ) mStrFun = invertCoefficients(funcTxt.value, alphabet, nvar); 
+        console.log(mStrFun);
         optimize(nvar, parseInt(poblationCountTxt.value), parseInt(individualCountTxt.value), 
             parseInt(bitsCountTxt.value), mStrFun, restrictions);
     });

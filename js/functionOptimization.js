@@ -1,4 +1,4 @@
-
+//
 function accumulateSums(numberArray) {
     let accumulate = [];
     let sum = 0;
@@ -156,24 +156,39 @@ function popWeakVectors(vectors, bitsRequired, indexes) {
 
 function printPairs(x, y) {
     for (let i = 0; i < x.length; ++i) 
-        console.log(x[i], y[i]);
+        console.log(i, x[i], y[i]);
+}
+
+function getMaxTuple(tuples, yvecs) {
+    const n = tuples.length;
+    let maxTuple = new Array(n);
+    let max = -Infinity;
+    //debugger;
+    for (let i = 0; i < n; ++i) {
+        if (yvecs[i] > max) {
+            max = yvecs[i];
+            maxTuple = tuples[i];
+        }
+    }
+    printPairs(tuples, yvecs);
+    return maxTuple;
 }
 
 function arrayIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRequired) {
     let variables = new Array(vectors.columns); // create an array of v.columns
     let evaluated = []; // it'll be printed
 
-    let tuples = []; // for printing
-    let maxTupleApplied = new Array(vectors.columns);
-    let max = -Infinity;
+    let tuples = new Array(vectors.rows); // for printing
 
+    let j = 0;
     vectors.matrix.forEach(function(vecs) {
         let i = 0;
         vecs.forEach( v => variables[i] = computeVariable(v, i++, restrictions, bitsRequired) );
+        //debugger;
         let y = evalObjectiveFunction(strFunction, variables);
-        tuples.push(variables);
+        tuples[j++] = variables.slice();
         evaluated.push(y);
-        if (y > max) { max = y; maxTupleApplied = variables; }
+        //debugger;
     });
 
     let totalSum = evaluated.reduce((x, y) => x + y, 0), divided = evaluated.map(e => e / totalSum);
@@ -183,7 +198,7 @@ function arrayIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRe
 
     randoms.forEach(rand => indexes.add(lowestUpperBound(accumulated, rand)));
     //debugger;
-    return [maxTupleApplied, Array.from(indexes).sort()];
+    return [getMaxTuple(tuples, evaluated), Array.from(indexes).sort()];
 }
 
 
@@ -211,13 +226,16 @@ function optimize(variableCount, poblationCount, individualCount, bitsCount,  ob
 
 function getResultAsString(maxTuples, strFunction) {
     let result = "";
+    let i = 1;
     maxTuples.forEach( tuple => {
-        result += "( ";
+        result += "Poblacion numero " + i.toString();
+        result += ": ( ";
         tuple.forEach(value => {
             result += value + ", ";
         });
         result += " ) => ";
         result += evalObjectiveFunction(strFunction, tuple) + " \n ";
+        ++i;
     })
     return result; 
 }
