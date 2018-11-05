@@ -35,7 +35,7 @@ function execEvents() {
 }
 
 function createHTMLRestrictions(vars, varCount, tableHTML) {
-    let template = '<tr> <td> <input type="number" id="low-X"> </td> \
+    const template = '<tr> <td> <input type="number" id="low-X"> </td> \
         <td>var</td> \
         <td> <input type="number" id="high-X"> </td> </tr>';
     let mainBody = tableHTML.getElementsByTagName("table")[0]
