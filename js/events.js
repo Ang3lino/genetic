@@ -69,6 +69,12 @@ function createRestrictions(amountVariables) {
     return restrictions;
 }
 
+function invertCoefficients(strFun, alphabet, variableCount) {
+    for (let i = 0; i < variableCount; ++i) 
+        strFun = strFun.replace(alphabet[i], "(-"+alphabet[i] + ")");
+    return strFun;
+}
+
 /**
  * Main function which executes everthing from this document.
  * 
@@ -79,15 +85,17 @@ function createRestrictions(amountVariables) {
 function execEvents() {
     let restrictionsTable = document.getElementById("restrictions-table");
     let updateBtn = document.getElementById("btn-update-restrictions");
-    let alphabet = "abcdefghijklmnopqrstuvwxyz";
     let computeBtn = document.getElementById("btn-compute");
     let funcTxt = document.getElementById("objective-func-txt");
     let txtAreaResult = document.getElementById("txtarea-result");
+
+    const alphabet = "abcdefghijklmnopqrstuvwxyz";
     let nvar;
 
     const individualCountTxt = document.getElementById("nindividual-txt");
     const poblationCountTxt = document.getElementById("npoblation-txt");
     const bitsCountTxt = document.getElementById("nbits-txt");
+    let maxOn = document.getElementById("switch-max");
 
     //blinkRestrictions(restrictionsTable, funcTxt.value.length);
 
@@ -96,9 +104,8 @@ function execEvents() {
         nvar = inferNumberVariables(funcTxt.value, alphabet);
 
         createHTMLRestrictions(alphabet, nvar, restrictionsTable);
+        
 
-        let maxOn = document.getElementById("switch-max");
-        console.log(maxOn);
         if (maxOn.checked) console.log("It is on."); 
         else console.log("It is off.");
 
@@ -108,8 +115,12 @@ function execEvents() {
         let restrictions = createRestrictions(nvar);
     
         txtAreaResult.value = "un mamut chiquitito queria volar";
-        //optimize(nvar, parseInt(poblationCountTxt.value), parseInt(individualCountTxt.value),
-        //    parseInt(bitsCountTxt.value), funcTxt, restrictions);
+        let mStrFun = funcTxt.value;
+
+        // prepare string for minimizing
+        if ( !maxOn.checked ) mStrFun = invertCoefficients(funcTxt.value, alphabet, nvar); 
+        optimize(nvar, parseInt(poblationCountTxt.value), parseInt(individualCountTxt.value), 
+            parseInt(bitsCountTxt.value), mStrFun, parseInt(bitsCountTxt.value),  restrictions);
     });
 
 }
