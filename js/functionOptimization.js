@@ -188,5 +188,3 @@ function optimize(variableCount, poblationCount, individualCount, bitsCount,  ob
 //main();
 //let arr = new Array(10).fill(1).map(e => Math.floor(10 * Math.random())).sort();
 //arr.forEach(e => document.write(binarySearch(arr, e) + "<br/>"));
-
-// Angel
