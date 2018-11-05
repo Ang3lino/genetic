@@ -9,20 +9,6 @@ function accumulateSums(numberArray) {
     return accumulate;
 }
 
-function createRestrictions(amountVariables) {
-    var restrictions = new Matrix(amountVariables, 2);
-
-    // restrictions for the first variable
-    restrictions.setElement(0, 0, 0);
-    restrictions.setElement(0, 1, 0.5);
-
-    // restrictions for the second variable
-    restrictions.setElement(1, 0, 0);
-    restrictions.setElement(1, 1, 1);
-
-    return restrictions;
-}
-
 function computeBitsRequired(variableCount, restrictions, bitsCount) {
     let bitsRequired = [ ];
     for (let i = 0; i < variableCount; ++i) {
@@ -179,13 +165,11 @@ function arrayIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRe
     return [maxValue, Array.from(indexes).sort()];
 }
 
-function main() {
 
-    // Problem inicialization
-    let variableCount = 2, restrictionCount = variableCount;
-    let poblationCount = 5, individualCount = 50, bitsCount = 1;
-    let restrictions = createRestrictions(variableCount);
-    let objectiveFunction = '(a) + (b)';  
+function optimize(variableCount, poblationCount, individualCount, bitsCount,  objectiveFunction, 
+                  restrictions) {
+
+    let restrictionCount = variableCount;
     
     let bitsRequired = computeBitsRequired(variableCount, restrictions, bitsCount);
     let vectors = generateValidVectors(individualCount, bitsRequired, restrictions);

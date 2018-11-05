@@ -58,6 +58,17 @@ function blinkRestrictions(restrictionsTable, valid) {
 
 }
 
+function createRestrictions(amountVariables) {
+    var restrictions = new Matrix(amountVariables, 2);
+    for (let i = 0; i < amountVariables; ++i) {
+        const a = document.getElementById("low-" + i.toString());
+        const b = document.getElementById("high-" + i.toString());
+        restrictions.setElement(i, 0, Number(a.value));
+        restrictions.setElement(i, 1, Number(b.value));
+    }
+    return restrictions;
+}
+
 /**
  * Main function which executes everthing from this document.
  * 
@@ -66,16 +77,22 @@ function blinkRestrictions(restrictionsTable, valid) {
  * we pass all the parameters to the functionOptimization.js source.
  */
 function execEvents() {
-    let funcTxt = document.getElementById("objective-func-txt");
     let restrictionsTable = document.getElementById("restrictions-table");
     let updateBtn = document.getElementById("btn-update-restrictions");
     let alphabet = "abcdefghijklmnopqrstuvwxyz";
+    let computeBtn = document.getElementById("btn-compute");
+    let funcTxt = document.getElementById("objective-func-txt");
+    let nvar;
+
+    const individualCountTxt = document.getElementById("nindividual-txt");
+    const poblationCountTxt = document.getElementById("npoblation-txt");
+    const bitsCountTxt = document.getElementById("nbits-txt");
 
     //blinkRestrictions(restrictionsTable, funcTxt.value.length);
 
     // Do not write the preffix "on" at the first parameter
     updateBtn.addEventListener("click", function(e) { 
-        let nvar = inferNumberVariables(funcTxt.value, alphabet);
+        nvar = inferNumberVariables(funcTxt.value, alphabet);
 
         createHTMLRestrictions(alphabet, nvar, restrictionsTable);
 
@@ -86,6 +103,13 @@ function execEvents() {
 
     });
 
+    computeBtn.addEventListener("click", function(e) {
+        debugger;
+        let restrictions = createRestrictions(nvar);
+
+        //optimize(nvar, parseInt(poblationCountTxt.value), parseInt(individualCountTxt.value),
+        //    parseInt(bitsCountTxt.value), funcTxt, restrictions);
+    });
 
 }
 
