@@ -13,18 +13,16 @@ function computeBitsRequired(variableCount, restrictions, bitsCount) {
     let bitsRequired = [ ];
     for (let i = 0; i < variableCount; ++i) {
         let diff = restrictions.getElement(i, 1) - restrictions.getElement(i, 0);
-	    if(diff>0) {
         let data = Math.floor(Math.log2(diff * 10 ** bitsCount) + 1);
         bitsRequired.push(data);
-	    }
-	    
     }
     return bitsRequired;
 }
 
+const eps = 1;
 function isValidVariable (variable, index, restrictions) {
-    return restrictions.getElement(index, 0) <= variable 
-        && variable <= restrictions.getElement(index, 1);
+    return restrictions.getElement(index, 0) - eps <= variable 
+        && variable <= restrictions.getElement(index, 1) + eps;
 }
 
 function computeVariable(x, i, restrictions, bitsRequired) {
@@ -46,8 +44,10 @@ function generateValidVectors(nIndividuals, bitsRequired, restrictions) {
     for (let i = 0; i < vectors.rows; ++i) {
         for (let j = 0; j < vectors.columns; ++j) {
             do {
+		debugger;
                 randomVar = ((1 << bitsRequired[j]) - 1) * Math.random(); 
                 restrictedValue = computeVariable(randomVar, j, restrictions, bitsRequired);
+                console.log("lol");
             } while (!isValidVariable(restrictedValue, j, restrictions)); 
             vectors.setElement(i, j, Math.floor(randomVar));
         }
