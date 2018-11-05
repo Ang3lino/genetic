@@ -23,16 +23,6 @@ function inferNumberVariables(strFun, alphabet) {
     return count;
 }
 
-/**
- * It appears or disappears the restrictions.
- * @param {HTMLObjects, the main container of the restrictions table} restrictionsTable 
- */
-function blinkRestrictions(restrictionsTable) {
-    className = restrictionsTable.className;
-    if (className.includes("hide")) className = className.replace("hide", "");
-    else className += "hide";
-    restrictionsTable.className = className;
-}
 
 /**
  * This function will create dynamically a table of restrictions to fill.
@@ -55,6 +45,20 @@ function createHTMLRestrictions(vars, varCount, tableHTML) {
 }
 
 /**
+ * It appears or disappears the restrictions.
+ * @param {HTMLObjects, the main container of the restrictions table} restrictionsTable 
+ */
+function blinkRestrictions(restrictionsTable, valid) {
+    className = restrictionsTable.className;
+
+    if (className.includes("hide") && valid) {
+        className = className.replace("hide", "");
+    } else className += "hide";
+    restrictionsTable.className = className;
+
+}
+
+/**
  * Main function which executes everthing from this document.
  * 
  * Basically, here we must obtain the objective function, infer the number of variables
@@ -67,11 +71,12 @@ function execEvents() {
     let updateBtn = document.getElementById("btn-update-restrictions");
     let alphabet = "abcdefghijklmnopqrstuvwxyz";
 
+    //blinkRestrictions(restrictionsTable, funcTxt.value.length);
+
     // Do not write the preffix "on" at the first parameter
     updateBtn.addEventListener("click", function(e) { 
         let nvar = inferNumberVariables(funcTxt.value, alphabet);
 
-        blinkRestrictions(restrictionsTable);
         createHTMLRestrictions(alphabet, nvar, restrictionsTable);
 
         let maxOn = document.getElementById("switch-max");
