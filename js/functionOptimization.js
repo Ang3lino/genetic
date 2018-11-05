@@ -146,7 +146,7 @@ function popWeakVectors(vectors, bitsRequired, indexes) {
 function arrayIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRequired) {
     let variables = new Array(vectors.columns); // create an array of v.columns
     let evaluated = [];
-    let maxTupleApplied = new Array(vector.columns);
+    let maxTupleApplied = new Array(vectors.columns);
     let max = -Infinity;
 
     vectors.matrix.forEach(function(vecs) {
@@ -189,7 +189,20 @@ function optimize(variableCount, poblationCount, individualCount, bitsCount,  ob
 
     
     let txtAreaResult = document.getElementById("txtarea-result");
-    txtAreaResult.value = maxTuples;
+    txtAreaResult.value = getResultAsString(maxTuples, objectiveFunction);
+}
+
+function getResultAsString(maxTuples, strFunction) {
+    let result = "";
+    maxTuples.forEach( tuple => {
+        result += "( ";
+        tuple.forEach(value => {
+            result += value + ", ";
+        });
+        result += " ) => ";
+        result += evalObjectiveFunction(strFunction, tuple) + " \n ";
+    })
+    return result; 
 }
 
 //main();
