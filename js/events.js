@@ -120,7 +120,7 @@ function execEvents() {
         // prepare string for minimizing
         if ( !maxOn.checked ) mStrFun = invertCoefficients(funcTxt.value, alphabet, nvar); 
         optimize(nvar, parseInt(poblationCountTxt.value), parseInt(individualCountTxt.value), 
-            parseInt(bitsCountTxt.value), mStrFun, parseInt(bitsCountTxt.value),  restrictions);
+            parseInt(bitsCountTxt.value), mStrFun, restrictions);
     });
 
 }
