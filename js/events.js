@@ -142,13 +142,20 @@ function isValidVariable(tuple, restrictions) {
         //debugger;
         const nargs = tuple.length;
         let buff = restriction; 
-        for (let i = 0; i < nargs; ++i) {
-            buff = buff.replace(alphabet[i], tuple[i]);
+        if (buff.includes("==")) {
+            let arr = buff.split("==");
+            let sum = arr[0], data = arr[1];
+            for (let i = 0; i < nargs; ++i) 
+                sum = sum.replace(alphabet[i], tuple[i]);
+            let x = eval(sum), d = eval(data);
+            if (Math.abs(x - d) > Number.EPSILON) 
+               return false	; 
+        } else {
+            for (let i = 0; i < nargs; ++i) 
+                buff = buff.replace(alphabet[i], tuple[i]);
+            const b = eval(buff);
+            if (!b) return false; 
         }
-        console.log(buff);
-        const b = eval(buff);
-        console.log(b);
-        if (!b) return false; 
     }
     return true;
 }
@@ -201,10 +208,8 @@ function execEvents() {
     });
 
     computeBtn.addEventListener("click", function(e) {
-        debugger;
-        let tuple = [ 1, 3 ];
+        //debugger;
         let restrictions = getAllRestrictions();
-        const x = isValidVariable(tuple, restrictions);
         let limits = createLimits(nvar);
 
         // hasta aqui
@@ -214,7 +219,7 @@ function execEvents() {
         if ( !maxOn.checked ) mStrFun = invertCoefficients(funcTxt.value, alphabet, nvar); 
         console.log(mStrFun);
         optimize(nvar, parseInt(poblationCountTxt.value), parseInt(individualCountTxt.value), 
-            parseInt(bitsCountTxt.value), mStrFun, limits);
+            parseInt(bitsCountTxt.value), mStrFun, limits, restrictions);
     });
 
 }
