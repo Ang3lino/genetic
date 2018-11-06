@@ -86,7 +86,7 @@ function getRestriction(i) {
 }
 
 /**
- * It returns all restrictions as an array of strings.
+ * It returns all the restrictions as an array of strings.
  */
 function getAllRestrictions() {
     let tableHTML = document.getElementById("restrictions");
@@ -129,6 +129,15 @@ function addRestrictions(tableHTML, n) {
         newStr += buff.replace("X", i).replace("X", i);
     }
     mainBody.innerHTML = newStr;
+}
+
+/**
+ * 
+ * @param {Array of values (a, b, ..., z) to be evaluated } tuple 
+ * @param {Array of restrictions represented as strings } restrictions 
+ */
+function IsValidVariable(tuple, restrictions) {
+    
 }
 
 /**

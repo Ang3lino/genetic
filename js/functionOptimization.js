@@ -203,7 +203,7 @@ function arrayIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRe
     return [getMaxTuple(tuples, evaluated), Array.from(indexes).sort()];
 }
 
-
+// main function
 function optimize(variableCount, poblationCount, individualCount, bitsCount,  objectiveFunction, 
                   restrictions) {
 
