@@ -1,3 +1,5 @@
+
+
 function accumulateSums(numberArray) {
     let accumulate = [];
     let sum = 0;
@@ -8,11 +10,11 @@ function accumulateSums(numberArray) {
     return accumulate;
 }
 
-function computeBitsRequired(variableCount, restrictions, bitsCount) {
+function computeBitsRequired(variableCount, limits, bitsCount) {
     let bitsRequired = [ ];
     for (let i = 0; i < variableCount; ++i) {
-        const b = restrictions.getElement(i, 1);
-        const a = restrictions.getElement(i, 0);
+        const b = limits.getElement(i, 1);
+        const a = limits.getElement(i, 0);
         let diff = b - a;
         if (isClose(a, b)) ++diff; // patch ?
         let data = Math.floor(Math.log2(diff * 10 ** bitsCount) + 1);
@@ -22,15 +24,24 @@ function computeBitsRequired(variableCount, restrictions, bitsCount) {
 }
 
 const eps = 1;
-function isValidVariable (variable, index, restrictions) {
-    const x = restrictions.getElement(index, 0) - eps <= variable;
-    const y = variable <= restrictions.getElement(index, 1) + eps; 
+
+/**
+ * deprecated
+ * @param {} variable 
+ * @param {*} index 
+ * @param {*} limits 
+ */
+/*
+function isValidVariable (variable, index, limits) {
+    const x = limits.getElement(index, 0) - eps <= variable;
+    const y = variable <= limits.getElement(index, 1) + eps; 
     return x && y;
 }
+*/
 
-function computeVariable(x, i, restrictions, bitsRequired) {
-    let a = restrictions.getElement(i, 0);
-    let b = restrictions.getElement(i, 1);
+function computeVariable(x, i, limits, bitsRequired) {
+    let a = limits.getElement(i, 0);
+    let b = limits.getElement(i, 1);
     return a + x * ((b - a) / ((1 << bitsRequired[i]) - 1));
 }
 
@@ -42,9 +53,9 @@ function isClose(a, b) {
  * Complexity O(n ** 3)
  * @param {amount of individuals} nIndividuals 
  * @param {array of the bits needed for every single variable} bitsRequired 
- * @param {A Matrix of restrictions} restrictions 
+ * @param {A Matrix of limits} limits 
  */
-function generateValidVectors(nIndividuals, bitsRequired, restrictions) {
+function generateValidVectors(nIndividuals, bitsRequired, limits) {
     let nVariables = bitsRequired.length;
     let vectors = new Matrix(nIndividuals, nVariables);
     let randomVar;
@@ -53,9 +64,9 @@ function generateValidVectors(nIndividuals, bitsRequired, restrictions) {
             do {
 		        //debugger;
                 randomVar = ((1 << bitsRequired[j]) - 1) * Math.random(); 
-                restrictedValue = computeVariable(randomVar, j, restrictions, bitsRequired);
+                restrictedValue = computeVariable(randomVar, j, limits, bitsRequired);
                 console.log("lol");
-            } while (!isValidVariable(restrictedValue, j, restrictions)); 
+            } while (!isValidVariable(restrictedValue, j, limits)); 
             vectors.setElement(i, j, Math.floor(randomVar));
         }
     }
@@ -176,7 +187,7 @@ function getMaxTuple(tuples, yvecs) {
     return maxTuple;
 }
 
-function arrayIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRequired) {
+function arrayIndexesStrongestVectors(vectors, strFunction, limits, bitsRequired) {
     let variables = new Array(vectors.columns); // create an array of v.columns
     let evaluated = []; // it'll be printed
 
@@ -185,7 +196,7 @@ function arrayIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRe
     let j = 0;
     vectors.matrix.forEach(function(vecs) {
         let i = 0;
-        vecs.forEach( v => variables[i] = computeVariable(v, i++, restrictions, bitsRequired) );
+        vecs.forEach( v => variables[i] = computeVariable(v, i++, limits, bitsRequired) );
         //debugger;
         let y = evalObjectiveFunction(strFunction, variables);
         tuples[j++] = variables.slice();
@@ -205,17 +216,17 @@ function arrayIndexesStrongestVectors(vectors, strFunction, restrictions, bitsRe
 
 // main function
 function optimize(variableCount, poblationCount, individualCount, bitsCount,  objectiveFunction, 
-                  restrictions) {
+                  limits) {
 
     let restrictionCount = variableCount;
     
-    let bitsRequired = computeBitsRequired(variableCount, restrictions, bitsCount);
-    let vectors = generateValidVectors(individualCount, bitsRequired, restrictions);
+    let bitsRequired = computeBitsRequired(variableCount, limits, bitsCount);
+    let vectors = generateValidVectors(individualCount, bitsRequired, limits);
     let maxTuples = new Set(); // stores the value of the highest value evaluated per poblation
     let indexes = [];
 
     for (let i = 0; i < poblationCount; ++i) {
-        let pair = arrayIndexesStrongestVectors(vectors, objectiveFunction, restrictions, bitsRequired);
+        let pair = arrayIndexesStrongestVectors(vectors, objectiveFunction, limits, bitsRequired);
         maxTuples.add(pair[0]);
         indexes = pair[1];
         popWeakVectors(vectors, bitsRequired, indexes); 

@@ -30,7 +30,7 @@ function inferNumberVariables(strFun, alphabet) {
  * @param {integer of the amount of variables used} varCount 
  * @param {An HTMLObject (container) of the restrictions table} tableHTML 
  */
-function createHTMLRestrictions(vars, varCount, tableHTML) {
+function createHTMLLimits(vars, varCount, tableHTML) {
     const template = '<tr> <td> <input type="number" id="low-X"> </td> \
         <td>var</td> \
         <td> <input type="number" id="high-X"> </td> </tr>';
@@ -48,20 +48,20 @@ function createHTMLRestrictions(vars, varCount, tableHTML) {
 
 /**
  * It appears or disappears the restrictions.
- * @param {HTMLObjects, the main container of the restrictions table} restrictionsTable 
+ * @param {HTMLObjects, the main container of the restrictions table} limitsTable 
  */
-function blinkRestrictions(restrictionsTable, valid) {
-    className = restrictionsTable.className;
+function blinkRestrictions(limitsTable, valid) {
+    className = limitsTable.className;
 
     if (className.includes("hide") && valid) {
         className = className.replace("hide", "");
     } else className += "hide";
-    restrictionsTable.className = className;
+    limitsTable.className = className;
 
 }
 
 // this name may confuse... v:
-function createRestrictions(amountVariables) {
+function createLimits(amountVariables) {
     var restrictions = new Matrix(amountVariables, 2);
     for (let i = 0; i < amountVariables; ++i) {
         const a = document.getElementById("low-" + i.toString());
@@ -136,8 +136,21 @@ function addRestrictions(tableHTML, n) {
  * @param {Array of values (a, b, ..., z) to be evaluated } tuple 
  * @param {Array of restrictions represented as strings } restrictions 
  */
-function IsValidVariable(tuple, restrictions) {
-    
+function isValidVariable(tuple, restrictions) {
+    let alphabet = "abcdefghijklmnopqrstuvwxyz";
+    for (restriction of restrictions) {
+        //debugger;
+        const nargs = tuple.length;
+        let buff = restriction; 
+        for (let i = 0; i < nargs; ++i) {
+            buff = buff.replace(alphabet[i], tuple[i]);
+        }
+        console.log(buff);
+        const b = eval(buff);
+        console.log(b);
+        if (!b) return false; 
+    }
+    return true;
 }
 
 /**
@@ -148,7 +161,8 @@ function IsValidVariable(tuple, restrictions) {
  * we pass all the parameters to the functionOptimization.js source.
  */
 function execEvents() {
-    let restrictionsTable = document.getElementById("restrictions-table");
+
+    let limitsTable = document.getElementById("limits-table");
 	let newrestrictions = document.getElementById("restrictions");
     let updateBtn = document.getElementById("btn-update-restrictions");
 	let addResBtn = document.getElementById("add-btn");
@@ -165,15 +179,13 @@ function execEvents() {
     let nvar = 0;
     let nres = 0;
 
-    //blinkRestrictions(restrictionsTable, funcTxt.value.length);
+    //blinkRestrictions(limitsTable, funcTxt.value.length);
 
     // Do not write the preffix "on" at the first parameter
     updateBtn.addEventListener("click", function(e) { 
-        console.log(getAllRestrictions());
         nvar = inferNumberVariables(funcTxt.value, alphabet);
-        createHTMLRestrictions(alphabet, nvar, restrictionsTable);
-        if (maxOn.checked) console.log("It is on."); 
-        else console.log("It is off.");
+        createHTMLLimits(alphabet, nvar, limitsTable);
+
     });
 	
 	addResBtn.addEventListener("click", function(e) { 
@@ -189,15 +201,20 @@ function execEvents() {
     });
 
     computeBtn.addEventListener("click", function(e) {
-        let restrictions = createRestrictions(nvar);
+        debugger;
+        let tuple = [ 1, 3 ];
+        let restrictions = getAllRestrictions();
+        const x = isValidVariable(tuple, restrictions);
+        let limits = createLimits(nvar);
 
+        // hasta aqui
         let mStrFun = funcTxt.value;
 
         // prepare string for minimizing
         if ( !maxOn.checked ) mStrFun = invertCoefficients(funcTxt.value, alphabet, nvar); 
         console.log(mStrFun);
         optimize(nvar, parseInt(poblationCountTxt.value), parseInt(individualCountTxt.value), 
-            parseInt(bitsCountTxt.value), mStrFun, restrictions);
+            parseInt(bitsCountTxt.value), mStrFun, limits);
     });
 
 }
