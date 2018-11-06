@@ -91,21 +91,23 @@ function invertCoefficients(strFun, alphabet, variableCount) {
  * This function will create  or delete dynamically new restrictions.
  * @param {An HTMLObject (container) of the restrictions} 
  */
-function AddRestrictions(tableHTML, n) {
+function addRestrictions(tableHTML, n) {
     const template = '<tr> \
 							<div class="col s12 input-field valign"> \
 								<label style="color:black"> Restriccion X </label> \
 								<input type="text" id="restriction-X"> \
 							</div> \
 						</tr>';
-    let mainBody = tableHTML.getElementsByTagName("table")[0]
-                            .getElementsByTagName("tbody")[0];
-    console.log(mainBody);
+    let table = tableHTML.getElementsByTagName("table")[0];
+    let tbodies = table.getElementsByTagName("tbody")[0];
+    let mainBody = tbodies;
+    //console.log(mainBody.getElementsByTagName("tr")[0]);
     let newStr = "";
     for (let i = 0; i < n; ++i) {
         let buff = template.replace("X", i);
         newStr += buff.replace("X", i).replace("X", i);
     }
+    console.log(tbodies.getElementsByTagName("tr").length); // number of tr elements
     mainBody.innerHTML = newStr;
 }
 
@@ -146,13 +148,13 @@ function execEvents() {
 	
 	addResBtn.addEventListener("click", function(e) { 
 		++nres;
-		AddRestrictions(newrestrictions, nres);
+		addRestrictions(newrestrictions, nres);
 		//let newRests = getRestriction(nres);
     });
 	
 	delResBtn.addEventListener("click", function(e) { 
         if (nres > 0) --nres;
-		AddRestrictions(newrestrictions, nres);
+		addRestrictions(newrestrictions, nres);
 		//let newRests = getRestriction(nres);
     });
 
