@@ -45,28 +45,6 @@ function createHTMLRestrictions(vars, varCount, tableHTML) {
 }
 
 
-/**
- * This function will create  or delete dynamically new restrictions.
- * @param {An HTMLObject (container) of the restrictions} 
- */
-		
-function AddRestrictions(tableHTML, n) {
-    const template = '<tr> \
-							<div class="col s12 input-field valign"> \
-								<label style="color:black"> Restriccion X </label> \
-								<input type="text" id="restriction-X"> \
-							</div> \
-						</tr>';
-    let mainBody = tableHTML.getElementsByTagName("table")[0]
-                            .getElementsByTagName("tbody")[0];
-    let newStr = "";
-    for (let i = 1; i < n; ++i) {
-        let buff = template.replace("X", i);
-        newStr += buff.replace("X", i).replace("X", i);
-    }
-    mainBody.innerHTML = newStr;
-}
-
 
 /**
  * It appears or disappears the restrictions.
@@ -110,6 +88,28 @@ function invertCoefficients(strFun, alphabet, variableCount) {
 }
 
 /**
+ * This function will create  or delete dynamically new restrictions.
+ * @param {An HTMLObject (container) of the restrictions} 
+ */
+function AddRestrictions(tableHTML, n) {
+    const template = '<tr> \
+							<div class="col s12 input-field valign"> \
+								<label style="color:black"> Restriccion X </label> \
+								<input type="text" id="restriction-X"> \
+							</div> \
+						</tr>';
+    let mainBody = tableHTML.getElementsByTagName("table")[0]
+                            .getElementsByTagName("tbody")[0];
+    console.log(mainBody);
+    let newStr = "";
+    for (let i = 0; i < n; ++i) {
+        let buff = template.replace("X", i);
+        newStr += buff.replace("X", i).replace("X", i);
+    }
+    mainBody.innerHTML = newStr;
+}
+
+/**
  * Main function which executes everthing from this document.
  * 
  * Basically, here we must obtain the objective function, infer the number of variables
@@ -126,47 +126,34 @@ function execEvents() {
     let funcTxt = document.getElementById("objective-func-txt");
 
     const alphabet = "abcdefghijklmnopqrstuvwxyz";
-    let nvar;
-	let nres = 1;
     const individualCountTxt = document.getElementById("nindividual-txt");
     const poblationCountTxt = document.getElementById("npoblation-txt");
     const bitsCountTxt = document.getElementById("nbits-txt");
+
     let maxOn = document.getElementById("switch-max");
+    let nvar = 0;
+    let nres = 0;
 
     //blinkRestrictions(restrictionsTable, funcTxt.value.length);
 
     // Do not write the preffix "on" at the first parameter
     updateBtn.addEventListener("click", function(e) { 
         nvar = inferNumberVariables(funcTxt.value, alphabet);
-
         createHTMLRestrictions(alphabet, nvar, restrictionsTable);
-
         if (maxOn.checked) console.log("It is on."); 
         else console.log("It is off.");
-
     });
 	
 	addResBtn.addEventListener("click", function(e) { 
-		nres = nres + 1;
-		
+		++nres;
 		AddRestrictions(newrestrictions, nres);
-        
-        if (maxOn.checked) console.log("It is on."); 
-        else console.log("It is off.");
-		
-		let newRests = getRestriction(nres);
+		//let newRests = getRestriction(nres);
     });
 	
 	delResBtn.addEventListener("click", function(e) { 
-		nres = nres - 1;
-		
+        if (nres > 0) --nres;
 		AddRestrictions(newrestrictions, nres);
-        
-        if (maxOn.checked) console.log("It is on."); 
-        else console.log("It is off.");
-		
-		let newRests = getRestriction(nres);
-
+		//let newRests = getRestriction(nres);
     });
 
     computeBtn.addEventListener("click", function(e) {
@@ -180,6 +167,5 @@ function execEvents() {
         optimize(nvar, parseInt(poblationCountTxt.value), parseInt(individualCountTxt.value), 
             parseInt(bitsCountTxt.value), mStrFun, restrictions);
     });
-	
 
 }
