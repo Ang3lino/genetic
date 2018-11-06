@@ -103,17 +103,6 @@ function generateValidVectors(nIndividuals, bitsRequired, limits, restrictions) 
 
 
 
-// TODO
-function evalObjectiveFunction(strFunction, variables) {
-    let strVars = 'abcdefhijklmnopqrstuvwxyz';
-    for (let i = 0; i < variables.length; ++i) {
-        let x = strVars.charAt(i);
-        let y = variables[i];
-        strFunction = strFunction.replace(x, y);
-    }
-    //console.log(strFunction);
-    return eval(strFunction);
-}
 
 /**
  * Finds the lowest upper bound of a sorted array, it is a kind of binary search.
@@ -165,37 +154,7 @@ function mutate(vector, bitsRequired) {
 	return newVec;
 }
 
-/**
- * Example
- * cross the first 3 bits
- * 1110 1010 strong vector
- * 0001 0101 weak vector
- * 1110      mask
- * 1111 0101 result
- * @param {Array} strongVec 
- * @param {Array} weakVec 
- * @param {Array} bitsRequired 
- */
-function cross(strongVec, weakVec, bitsRequired) {
-	let selVar = Math.floor(bitsRequired.length * Math.random());
-	let n =	Math.floor(bitsRequired[selVar] * Math.random());
-    let newVec = weakVec.slice(); // copy a vector
-    let mask = (1 << n) - 1;
-    newVec[selVar] = (strongVec[selVar] & (~mask)) | (weakVec[selVar] & (mask));
-    return newVec;
-}
 
-function popWeakVectors(vectors, bitsRequired, indexes) {
-    const nweaks = vectors.rows - indexes.length;
-    for (let i = 0; i < nweaks; ++i) {
-        const coin = Math.random();
-        if (!binarySearch(indexes, i)) { // the index corresponds to a weak vector
-            if (coin < 0.5) vectors.matrix[i] = mutate(vectors.matrix[i], bitsRequired);
-            else 
-                vectors.matrix[i] = cross(vectors.matrix[indexes[i]], vectors.matrix[i], bitsRequired);
-        }
-    }
-}
 
 function printPairs(x, y) {
     for (let i = 0; i < x.length; ++i) 
@@ -215,6 +174,18 @@ function getMaxTuple(tuples, yvecs) {
     }
     printPairs(tuples, yvecs);
     return maxTuple;
+}
+
+function evalObjectiveFunction(strFunction, variables) {
+    let strVars = 'abcdefhijklmnopqrstuvwxyz';
+    let buff = strFunction;
+    for (let i = 0; i < variables.length; ++i) {
+        let x = strVars.charAt(i);
+        let y = variables[i];
+        buff = buff.replace(x, y);
+    }
+    console.log(buff);
+    return eval(buff);
 }
 
 function arrayIndexesStrongestVectors(vectors, strFunction, limits, bitsRequired) {
@@ -241,7 +212,61 @@ function arrayIndexesStrongestVectors(vectors, strFunction, limits, bitsRequired
 
     randoms.forEach(rand => indexes.add(lowestUpperBound(accumulated, rand)));
     //debugger;
-    return [getMaxTuple(tuples, evaluated), Array.from(indexes).sort()];
+    return [getMaxTuple(tuples, evaluated), Array.from(indexes).sort(function(a, b) { return a - b })];
+}
+
+function binTupleAsReal(binTuple, bitsRequired, limits) {
+    realTuple = [];
+    for (let j = 0; j < binTuple.length; ++j) {
+        realTuple.push(computeVariable(binTuple[j], j, limits, bitsRequired));
+    }
+    return realTuple;
+}
+
+/**
+ * Example
+ * cross the first 3 bits
+ * 1110 1010 strong vector
+ * 0001 0101 weak vector
+ * 1110      mask
+ * 1111 0101 result
+ * @param {Array} strongVec 
+ * @param {Array} weakVec 
+ * @param {Array} bitsRequired 
+ */
+function cross(strongVec, weakVec, bitsRequired) {
+	let selVar = Math.floor(bitsRequired.length * Math.random());
+	let n =	Math.floor(bitsRequired[selVar] * Math.random());
+    let newVec = weakVec.slice(); // copy a vector
+    let mask = (1 << n) - 1;
+    newVec[selVar] = (strongVec[selVar] & (~mask)) | (weakVec[selVar] & (mask));
+    return newVec;
+}
+
+function popWeakVectors(vectors, bitsRequired, indexes, restrictions, limits) {
+    const nweaks = vectors.rows - indexes.length;
+    let tries = 0;
+    for (let i = 0; i < nweaks; ++i) {
+        if (!binarySearch(indexes, i)) { // the index corresponds to a weak vector
+            do {
+                const coin = Math.random();
+                if (coin < 0.5) vectors.matrix[i] = mutate(vectors.matrix[i], bitsRequired);
+                else {
+                    try {
+                        const strongIndexLim = Math.floor(Math.random() * indexes.length);
+                        vectors.matrix[i] = cross(vectors.matrix[indexes[strongIndexLim]], vectors.matrix[i], bitsRequired);
+                    } catch (err) {
+                        debugger;
+                        const strongIndexLim = Math.floor(Math.random() * indexes.length);
+                        vectors.matrix[i] = cross(vectors.matrix[indexes[strongIndexLim]], vectors.matrix[i], bitsRequired);
+                    }
+                }
+                const realTuple = binTupleAsReal(vectors.matrix[i], bitsRequired, limits);
+                console.log(++tries); 
+            } while (!isValidVariable(realTuple, restrictions));
+            console.log("done !");
+        }
+    }
 }
 
 // main function
@@ -250,7 +275,7 @@ function optimize(variableCount, poblationCount, individualCount, bitsCount,  ob
 
     let restrictionCount = variableCount;
     
-    debugger;
+    //debugger;
     let bitsRequired = computeBitsRequired(variableCount, limits, bitsCount);
     let vectors = generateValidVectors(individualCount, bitsRequired, limits,  restrictions);
     let maxTuples = new Set(); // stores the value of the highest value evaluated per poblation
@@ -260,7 +285,7 @@ function optimize(variableCount, poblationCount, individualCount, bitsCount,  ob
         let pair = arrayIndexesStrongestVectors(vectors, objectiveFunction, limits, bitsRequired);
         maxTuples.add(pair[0]);
         indexes = pair[1];
-        popWeakVectors(vectors, bitsRequired, indexes); 
+        popWeakVectors(vectors, bitsRequired, indexes, restrictions, limits); 
     }
 
     

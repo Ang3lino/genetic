@@ -103,7 +103,7 @@ function getAllRestrictions() {
 
 function invertCoefficients(strFun, alphabet, variableCount) {
     for (let i = 0; i < variableCount; ++i) 
-        strFun = strFun.replace(alphabet[i], "(-"+alphabet[i] + ")");
+        strFun = strFun.replace(alphabet[i], "(-1)*"+alphabet[i] );
     return strFun;
 }
 
@@ -148,7 +148,7 @@ function isValidVariable(tuple, restrictions) {
             for (let i = 0; i < nargs; ++i) 
                 sum = sum.replace(alphabet[i], tuple[i]);
             let x = eval(sum), d = eval(data);
-            if (Math.abs(x - d) > Number.EPSILON) 
+            if (Math.abs(x - d) > 10) 
                return false	; 
         } else {
             for (let i = 0; i < nargs; ++i) 
