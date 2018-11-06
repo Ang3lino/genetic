@@ -252,14 +252,8 @@ function popWeakVectors(vectors, bitsRequired, indexes, restrictions, limits) {
                 const coin = Math.random();
                 if (coin < 0.5) vectors.matrix[i] = mutate(vectors.matrix[i], bitsRequired);
                 else {
-                    try {
-                        const strongIndexLim = Math.floor(Math.random() * indexes.length);
-                        vectors.matrix[i] = cross(vectors.matrix[indexes[strongIndexLim]], vectors.matrix[i], bitsRequired);
-                    } catch (err) {
-                        debugger;
-                        const strongIndexLim = Math.floor(Math.random() * indexes.length);
-                        vectors.matrix[i] = cross(vectors.matrix[indexes[strongIndexLim]], vectors.matrix[i], bitsRequired);
-                    }
+                    const strongIndexLim = Math.floor(Math.random() * indexes.length);
+                    vectors.matrix[i] = cross(vectors.matrix[indexes[strongIndexLim]], vectors.matrix[i], bitsRequired);
                 }
                 const realTuple = binTupleAsReal(vectors.matrix[i], bitsRequired, limits);
                 console.log(++tries); 
