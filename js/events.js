@@ -107,8 +107,8 @@ function addRestrictions(tableHTML, n) {
         let buff = template.replace("X", i);
         newStr += buff.replace("X", i).replace("X", i);
     }
-    console.log(tbodies.getElementsByTagName("tr").length); // number of tr elements
     mainBody.innerHTML = newStr;
+    console.log(tbodies.getElementsByTagName("tr").length); // number of tr elements
 }
 
 /**
