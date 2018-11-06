@@ -60,6 +60,7 @@ function blinkRestrictions(restrictionsTable, valid) {
 
 }
 
+// this name may confuse... v:
 function createRestrictions(amountVariables) {
     var restrictions = new Matrix(amountVariables, 2);
     for (let i = 0; i < amountVariables; ++i) {
@@ -71,15 +72,34 @@ function createRestrictions(amountVariables) {
     return restrictions;
 }
 
-function getRestriction(n) {
-	var listOfRestrictions = new Matrix(n, 1);
-	for (let i = 0; i < n; ++i) {
+function getRestriction(i) {
+    let tableHTML = document.getElementById("restrictions");
+    let table = tableHTML.getElementsByTagName("table")[0];
+    let tbodies = table.getElementsByTagName("tbody")[0];
+    const n = tbodies.getElementsByTagName("tr").length; // number of tr elements
+    if (i <  n) {
         var restrictionX = document.getElementById("restriction-" + i.toString());
-		listOfRestrictions.setElement(i, 0, String(restrictionX.value));
+        return restrictionX.value;
+    } else {
+        throw "restriction unavailable";
     }
-	return listOfRestrictions;
 }
 
+/**
+ * It returns all restrictions as an array of strings.
+ */
+function getAllRestrictions() {
+    let tableHTML = document.getElementById("restrictions");
+    let table = tableHTML.getElementsByTagName("table")[0];
+    let tbodies = table.getElementsByTagName("tbody")[0];
+    const n = tbodies.getElementsByTagName("tr").length; // number of tr elements
+    var listOfRestrictions = []; 
+    for (let i = 0; i < n; ++i) {
+        let restriction = getRestriction(i);
+        listOfRestrictions.push(restriction);
+    }
+    return listOfRestrictions;
+}
 
 function invertCoefficients(strFun, alphabet, variableCount) {
     for (let i = 0; i < variableCount; ++i) 
@@ -100,6 +120,7 @@ function addRestrictions(tableHTML, n) {
 						</tr>';
     let table = tableHTML.getElementsByTagName("table")[0];
     let tbodies = table.getElementsByTagName("tbody")[0];
+    console.log(tbodies.getElementsByTagName("tr").length); // number of tr elements
     let mainBody = tbodies;
     //console.log(mainBody.getElementsByTagName("tr")[0]);
     let newStr = "";
@@ -108,7 +129,6 @@ function addRestrictions(tableHTML, n) {
         newStr += buff.replace("X", i).replace("X", i);
     }
     mainBody.innerHTML = newStr;
-    console.log(tbodies.getElementsByTagName("tr").length); // number of tr elements
 }
 
 /**
@@ -140,6 +160,7 @@ function execEvents() {
 
     // Do not write the preffix "on" at the first parameter
     updateBtn.addEventListener("click", function(e) { 
+        console.log(getAllRestrictions());
         nvar = inferNumberVariables(funcTxt.value, alphabet);
         createHTMLRestrictions(alphabet, nvar, restrictionsTable);
         if (maxOn.checked) console.log("It is on."); 
@@ -148,7 +169,7 @@ function execEvents() {
 	
 	addResBtn.addEventListener("click", function(e) { 
 		++nres;
-		addRestrictions(newrestrictions, nres);
+        addRestrictions(newrestrictions, nres);
 		//let newRests = getRestriction(nres);
     });
 	
